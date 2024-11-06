@@ -33,7 +33,7 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User authenticateUser(String username, String password) {
+    public boolean authenticateUser(String username, String password) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -44,9 +44,5 @@ public class UserService {
 
 
 
-    public boolean authenticateAdmin(String email, String password) {
-        User admin = userRepository.findByEmail(email);
 
-        return admin != null && admin.getPassword().equals(password);
-    }
 }
