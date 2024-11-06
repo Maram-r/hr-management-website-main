@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demande de Congé</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 30px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-around;
+            background-color: royalblue;
+            padding: 15px 0;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        .navbar a:hover {
+            color: #d0e1ff;
+        }
+    </style>
+    <script>
+        // Fonction pour soumettre une demande de congé
+        function submitLeaveRequest(event) {
+            event.preventDefault();
+
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            fetch('http://localhost:8081/api/leave-requests', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ startDate, endDate })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Votre demande de congé a été soumise.");
+                        fetchLeaveHistory(); // Mettre à jour l'historique
+                    } else {
+                        alert("Erreur lors de la soumission de la demande.");
+                    }
+                })
+                .catch(error => console.error("Erreur:", error));
+        }
+
+        // Fonction pour récupérer l'historique des demandes de congé
+        function fetchLeaveHistory() {
+            fetch('http://localhost:8081/api/leaves')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('leaveHistory');
+                    tableBody.innerHTML = ''; // Vider le tableau
+                    data.forEach(request => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${request.startDate}</td>
+                            <td>${request.endDate}</td>
+                            <td>${request.daysUsed || 'N/A'}</td>
+                            <td>${request.daysRemaining || 'N/A'}</td>
+                            <td>${request.status}</td>`;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Erreur:', error));
+        }
+
+        // Charger l'historique des congés au démarrage de la page
+        window.onload = fetchLeaveHistory;
+    </script>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <a href="leaveRequest.html">Demande de Congés</a>
+    <a href="documentRequest.html">Demande de Document</a>
+    <a href="career.html">Carrière</a>
+</div>
+
+<!-- Contenu principal -->
+<div class="container">
+    <h1>Demande de Congé</h1>
+    <form onsubmit="submitLeaveRequest(event)">
+        <div class="form-group">
+            <label for="startDate">Date de début :</label>
+            <input type="date" id="startDate" name="startDate" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="endDate">Date de fin :</label>
+            <input type="date" id="endDate" name="endDate" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Soumettre la Demande</button>
+    </form>
+
+    <h2 class="mt-5">Historique des Congés</h2>
+    <table class="table table-striped mt-3">
+        <thead class="thead-light">
+        <tr>
+            <th>Date de début</th>
+            <th>Date de fin</th>
+            <th>Jours consommés</th>
+            <th>Jours restants</th>
+            <th>Statut</th>
+        </tr>
+        </thead>
+        <tbody id="leaveHistory">
+        <!-- Historique des demandes de congé -->
+        </tbody>
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+</body>
+</html>

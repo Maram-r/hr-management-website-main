@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des Départements</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .container {
+      margin-top: 30px;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    h1, h2 {
+      color: #343a40;
+    }
+    /* Styles pour la barre de navigation */
+    .active-nav {
+      background-color: #495057; /* Couleur d'arrière-plan pour l'élément actif */
+    }
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-around;
+      background-color: royalblue;
+      padding: 15px 0;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    .navbar a:hover {
+      color: #3b5fc9;
+    }
+  </style>
+  <script>
+    // Fonction pour récupérer et afficher les départements
+    function fetchDepartments() {
+      fetch('http://localhost:8081/api/departments')
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Erreur dans la récupération des données');
+                }
+                return response.json();
+              })
+              .then(departments => {
+                const tableBody = document.getElementById('departmentsTableBody');
+                tableBody.innerHTML = '';
+
+                departments.forEach(department => {
+                  const row = document.createElement('tr');
+                  row.innerHTML = `
+              <td>${department.id}</td>
+              <td>${department.name}</td>
+              <td>${department.description}</td>
+              <td>
+                <button class="btn btn-warning btn-sm" onclick="editDepartment(${department.id})"><i class="fas fa-edit"></i> Modifier</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteDepartment(${department.id})"><i class="fas fa-trash"></i> Supprimer</button>
+              </td>
+            `;
+                  tableBody.appendChild(row);
+                });
+              })
+              .catch(error => {
+                console.error('Erreur:', error);
+              });
+    }
+
+    // Fonction pour ajouter un département
+    function addDepartment() {
+      const departmentName = document.getElementById('departmentName').value;
+      const departmentDescription = document.getElementById('departmentDescription').value;
+
+      fetch('http://localhost:8081/api/departments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name: departmentName, description: departmentDescription })
+      })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Erreur dans l\'ajout du département');
+                }
+                return response.json();
+              })
+              .then(() => {
+                document.getElementById('departmentName').value = '';
+                document.getElementById('departmentDescription').value = '';
+                fetchDepartments();
+              })
+              .catch(error => {
+                console.error('Erreur:', error);
+              });
+    }
+
+    // Fonction pour supprimer un département
+    function deleteDepartment(departmentId) {
+      fetch(`http://localhost:8081/api/departments/${departmentId}`, {
+        method: 'DELETE'
+      })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Erreur dans la suppression du département');
+                }
+                fetchDepartments();
+              })
+              .catch(error => {
+                console.error('Erreur:', error);
+              });
+    }
+
+    // Fonction pour éditer un département
+    function editDepartment(departmentId) {
+      const departmentName = prompt("Entrez le nouveau nom du département:");
+      const departmentDescription = prompt("Entrez la nouvelle description du département:");
+
+      if (departmentName && departmentDescription) {
+        fetch(`http://localhost:8081/api/departments/${departmentId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name: departmentName, description: departmentDescription })
+        })
+                .then(response => {
+                  if (!response.ok) {
+                    throw new Error('Erreur dans la modification du département');
+                  }
+                  fetchDepartments();
+                })
+                .catch(error => {
+                  console.error('Erreur:', error);
+                });
+      }
+    }
+
+    // Appeler la fonction pour récupérer les départements quand la page est chargée
+    window.onload = fetchDepartments;
+  </script>
+</head>
+<body>
+<!-- Navbar -->
+<div class="navbar">
+  <a href="roleList.html">Gestion Des Roles</a>
+  <a href="employeesList.html">Gestion des Employés</a>
+  <a href="departmentsList.html">Gestion des Départements</a>
+  <a href="documentList.html">Gestion des documents</a>
+  <a href="leaveList.html">Gestion des congés</a>
+</div>
+
+<div class="container mt-5">
+  <h1 class="mb-4">Gestion des Départements</h1>
+
+  <!-- Formulaire pour ajouter un département -->
+  <h2>Ajouter un département</h2>
+  <div class="form-group">
+    <label for="departmentName">Nom du département</label>
+    <input type="text" class="form-control" id="departmentName" required>
+  </div>
+  <div class="form-group">
+    <label for="departmentDescription">Description du département</label>
+    <input type="text" class="form-control" id="departmentDescription">
+  </div>
+  <button class="btn btn-primary" onclick="addDepartment()">Ajouter</button>
+
+  <!-- Tableau pour afficher les départements -->
+  <h2 class="mt-5">Liste des Départements</h2>
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nom</th>
+      <th>Description</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody id="departmentsTableBody">
+    <!-- Les départements seront insérés ici dynamiquement -->
+    </tbody>
+  </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

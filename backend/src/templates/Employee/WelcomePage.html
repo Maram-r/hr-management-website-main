@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accueil Employé</title>
+  <style>
+    /* Style global */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f0f4f8;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: center;
+      background-color: royalblue;
+      padding: 15px 0;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+      margin: 0 15px;
+      transition: color 0.3s ease;
+    }
+
+    .navbar a:hover {
+      color: #d0e1ff;
+    }
+
+    /* Contenu principal centré */
+    .content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Boîte de contenu */
+    .box {
+      max-width: 800px;
+      width: 100%;
+      background-color: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+      text-align: center;
+    }
+
+    .box h1 {
+      color: royalblue;
+      margin-bottom: 20px;
+    }
+
+    .box p {
+      color: #333;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    /* Boutons d'action */
+    .action-buttons {
+      margin-top: 20px;
+    }
+
+    .action-buttons a {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 10px;
+      color: white;
+      background-color: royalblue;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .action-buttons a:hover {
+      background-color: #3b5fc9;
+    }
+
+    /* Media Queries pour mobile */
+    @media (max-width: 480px) {
+      .navbar {
+        flex-direction: column;
+      }
+
+      .navbar a {
+        padding: 10px 0;
+        text-align: center;
+      }
+
+      .action-buttons a {
+        display: block;
+        width: 100%;
+        margin: 10px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <a href="career.html">Profile</a>
+  <a href="leaveRequest.html">Demande de Congés</a>
+  <a href="documentRequest.html">Demande de Document</a>
+</div>
+<!-- Contenu principal centré -->
+<div class="content">
+  <div class="box">
+    <h1>Bienvenue sur l'Accueil Employé</h1>
+    <p>Vous pouvez utiliser les options ci-dessus pour soumettre une demande de congé, demander des documents ou consulter les opportunités de carrière.</p>
+
+    <!-- Boutons d'action vers les différentes sections -->
+    <div class="action-buttons">
+      <a href="leaveRequest.html">Demander un Congé</a>
+      <a href="documentRequest.html">Demander un Document</a>
+      <a href="career.html">Voir les Opportunités de Carrière</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

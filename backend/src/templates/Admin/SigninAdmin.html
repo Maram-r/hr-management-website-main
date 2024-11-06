@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        /* Conteneur global */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Formulaire centré avec une apparence moderne */
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 500px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            margin: 80px auto;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+        }
+
+        /* Ajouter une légère animation lorsqu'on survole le formulaire */
+        .form:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Style du titre du formulaire */
+        .title {
+            font-size: 28px;
+            color: royalblue;
+            font-weight: bold;
+            letter-spacing: -1px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding-left: 30px;
+            text-transform: uppercase;
+        }
+
+        /* Ajouter une icône à gauche du titre */
+        .title::before, .title::after {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            left: 0px;
+            background-color: royalblue;
+        }
+
+        /* Effet d'animation sur l'icône du titre */
+        .title::after {
+            animation: pulse 1s linear infinite;
+        }
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+                opacity: 1;
+            }
+            to {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Message sous le titre */
+        .message {
+            color: #757575;
+            font-size: 14px;
+            line-height: 1.5;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        /* Champs du formulaire avec un effet de focus */
+        .input {
+            width: 89%;
+            padding: 12px;
+            outline: none;
+            border: 1px solid #d1d1d1;
+            border-radius: 10px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            font-size: 16px;
+        }
+
+        .input:focus {
+            border-color: royalblue;
+            box-shadow: 0 0 8px rgba(65, 105, 225, 0.3);
+        }
+
+        /* Bouton de soumission */
+        .submit {
+            border: none;
+            outline: none;
+            background-color: royalblue;
+            padding: 12px;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .submit:hover {
+            background-color: #3b5fc9;
+            transform: translateY(-2px);
+        }
+
+        /* Message pour l'inscription */
+        .signup {
+            text-align: center;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .signup a {
+            color: royalblue;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .signup a:hover {
+            color: #3b5fc9;
+            text-decoration: underline;
+        }
+
+        /* Pour une meilleure apparence des inputs sur mobile */
+        @media (max-width: 480px) {
+            .form {
+                max-width: 95%;
+                padding: 20px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<form class="form" id="loginForm">
+    <p class="title">Login</p>
+    <p class="message">Enter your credentials to access your account.</p>
+    <label>
+        <input required placeholder="Email" type="email" id="email" class="input">
+    </label>
+    <label>
+        <input required placeholder="Password" type="password" id="password" class="input">
+    </label>
+    <button type="button" class="submit" onclick="login()">Login</button>
+    <p class="signup">Don't have an account? <a href="SignupAdmin.html">Signup</a></p>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    // Fonction de connexion
+    function login() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        axios.get('http://localhost:8081/api/users', { email, password })
+            .then(response => {
+                alert('Login successful!');
+                window.location.href = "AdminHome.html";
+            })
+            .catch(error => {
+                console.error('Login failed:', error);
+                alert('Login failed!');
+            });
+    }
+</script>
+
+</body>
+</html>

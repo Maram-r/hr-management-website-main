@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des Demandes de Congé</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .container {
+      margin-top: 30px;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-around;
+      background-color: royalblue;
+      padding: 15px 0;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+    }
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+    .navbar a:hover {
+      color: #3b5fc9;
+    }
+  </style>
+  <script>
+    // Fonction pour obtenir les demandes de congé depuis l'API
+    function fetchLeaveRequests() {
+      fetch('http://localhost:8081/api/leave-requests')
+              .then(response => response.json())
+              .then(data => {
+                const tableBody = document.getElementById('adminLeaveRequests');
+                tableBody.innerHTML = '';
+                data.forEach(request => {
+                  const row = document.createElement('tr');
+                  row.innerHTML = `
+              <td>${request.employee.name}</td>
+              <td>${request.startDate}</td>
+              <td>${request.endDate}</td>
+              <td>${request.status}</td>
+              <td>
+                <button class="btn btn-success" onclick="acceptLeave(${request.id})">Accepter</button>
+                <button class="btn btn-danger" onclick="rejectLeave(${request.id})">Rejeter</button>
+              </td>`;
+                  tableBody.appendChild(row);
+                });
+              })
+              .catch(error => console.error('Erreur:', error));
+    }
+
+    // Fonction pour accepter une demande de congé
+    function acceptLeave(id) {
+      fetch(`http://localhost:8081/api/leave-requests/${id}/accept`, { method: 'POST' })
+              .then(response => {
+                if (response.ok) {
+                  alert('Demande acceptée.');
+                  fetchLeaveRequests(); // Mise à jour de la liste
+                }
+              })
+              .catch(error => console.error('Erreur:', error));
+    }
+
+    // Fonction pour rejeter une demande de congé
+    function rejectLeave(id) {
+      fetch(`http://localhost:8081/api/leave-requests/${id}/reject`, { method: 'POST' })
+              .then(response => {
+                if (response.ok) {
+                  alert('Demande rejetée.');
+                  fetchLeaveRequests(); // Mise à jour de la liste
+                }
+              })
+              .catch(error => console.error('Erreur:', error));
+    }
+
+    // Charger les demandes au démarrage de la page
+    window.onload = fetchLeaveRequests;
+  </script>
+</head>
+<body>
+<!-- Navbar -->
+<div class="navbar">
+  <a href="roleList.html">Gestion des Rôles</a>
+  <a href="employeesList.html">Gestion des Employés</a>
+  <a href="departmentsList.html">Gestion des Départements</a>
+  <a href="documentList.html">Gestion des Documents</a>
+  <a href="leaveList.html">Gestion des Congés</a>
+</div>
+
+<div class="container mt-5">
+  <h1>Gestion des Demandes de Congé</h1>
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>Employé</th>
+      <th>Date de début</th>
+      <th>Date de fin</th>
+      <th>Statut</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody id="adminLeaveRequests">
+    <!-- Les demandes de congé seront insérées ici par JavaScript -->
+    </tbody>
+  </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+</body>
+</html>

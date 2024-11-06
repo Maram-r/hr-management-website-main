@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    /* Conteneur global */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-around;
+      background-color: royalblue;
+      padding: 15px 0;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    .navbar a:hover {
+      color: #3b5fc9;
+    }
+
+    /* Contenu principal */
+    .content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin-top: 50px;
+    }
+
+    /* Tableau de bord */
+    .dashboard {
+      max-width: 800px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .dashboard h2 {
+      text-align: center;
+      color: royalblue;
+    }
+
+    /* Style pour le tableau des employés */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    table th, table td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #d1d1d1;
+    }
+
+    table th {
+      background-color: #f0f4f8;
+    }
+
+    /* Media Queries pour mobile */
+    @media (max-width: 480px) {
+      .navbar {
+        flex-direction: column;
+      }
+
+      .navbar a {
+        padding: 10px 0;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <a href="roleList.html">Gestion Des Roles</a>
+  <a href="employeesList.html">Gestion des Employés</a>
+  <a href="departmentsList.html">Gestion des Départements</a>
+  <a href="documentList.html">Gestion des documents</a>
+  <a href="leaveList.html">Gestion des congés</a>
+</div>
+
+<!-- Contenu principal -->
+<div class="content">
+  <div class="dashboard">
+    <h2>Tableau de Bord des Employés</h2>
+    <table>
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>Poste</th>
+        <th>Département</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>1</td>
+        <td>Jean Dupont</td>
+        <td>Développeur</td>
+        <td>IT</td>
+        <td><button>Modifier</button></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Marie Curie</td>
+        <td>Ingénieur</td>
+        <td>Recherche</td>
+        <td><button>Modifier</button></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Paul Martin</td>
+        <td>Manager</td>
+        <td>Ventes</td>
+        <td><button>Modifier</button></td>
+      </tr>
+      <!-- Ajoutez d'autres lignes ici -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile</title>
+</head>
+<body>
+
+<div id="user-profile">
+  <h1>Welcome, <span id="username"></span></h1>
+  <!-- Ajouter d'autres informations sur l'utilisateur ici -->
+</div>
+
+<script>
+  // Récupérer l'ID de l'utilisateur depuis l'URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId = urlParams.get('id');
+
+  // Appeler l'API pour récupérer les informations de l'utilisateur
+  axios.get(`http://localhost:8081/api/users/${userId}`)
+          .then(response => {
+            // Afficher les informations de l'utilisateur
+            document.getElementById('username').innerText = response.data.username;
+          })
+          .catch(error => {
+            console.error('Error loading user data:', error);
+            alert('Failed to load user profile!');
+          });
+</script>
+
+</body>
+</html>

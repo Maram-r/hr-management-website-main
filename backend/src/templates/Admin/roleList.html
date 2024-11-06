@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des Rôles</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .container {
+      margin-top: 30px;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    h1, h2 {
+      color: #343a40;
+    }
+    .btn-primary {
+      background-color: #007bff;
+      border: none;
+    }
+    .btn-danger {
+      background-color: #dc3545;
+      border: none;
+    }
+    .btn-warning {
+      background-color: #ffc107;
+      border: none;
+    }
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-around;
+      background-color: royalblue;
+      padding: 15px 0;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    .navbar a:hover {
+      color: #3b5fc9;
+    }
+  </style>
+  <script>
+    // Fonction pour récupérer et afficher les rôles
+    function fetchRoles() {
+      fetch('http://localhost:8081/api/roles')
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Erreur dans la récupération des données');
+                }
+                return response.json();
+              })
+              .then(roles => {
+                const tableBody = document.getElementById('rolesTableBody');
+                tableBody.innerHTML = '';
+
+                roles.forEach(role => {
+                  const row = document.createElement('tr');
+                  row.innerHTML = `
+              <td>${role.id}</td>
+              <td>${role.name}</td>
+              <td>${role.description}</td>
+              <td>
+                <button class="btn btn-warning btn-sm" onclick="editRole(${role.id})"><i class="fas fa-edit"></i> Modifier</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteRole(${role.id})"><i class="fas fa-trash"></i> Supprimer</button>
+              </td>
+            `;
+                  tableBody.appendChild(row);
+                });
+              })
+              .catch(error => {
+                console.error('Erreur:', error);
+              });
+    }
+
+    // Fonction pour ajouter un rôle
+    function addRole() {
+      const roleName = document.getElementById('roleName').value;
+      const roleDescription = document.getElementById('roleDescription').value;
+
+      fetch('http://localhost:8081/api/roles', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name: roleName, description: roleDescription })
+      })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Erreur dans l\'ajout du rôle');
+                }
+                return response.json();
+              })
+              .then(() => {
+                document.getElementById('roleName').value = '';
+                document.getElementById('roleDescription').value = '';
+                fetchRoles();
+              })
+              .catch(error => {
+                console.error('Erreur:', error);
+              });
+    }
+
+    // Fonction pour supprimer un rôle
+    function deleteRole(roleId) {
+      fetch(`http://localhost:8081/api/roles/${roleId}`, {
+        method: 'DELETE'
+      })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Erreur dans la suppression du rôle');
+                }
+                fetchRoles();
+              })
+              .catch(error => {
+                console.error('Erreur:', error);
+              });
+    }
+
+    // Fonction pour éditer un rôle
+    function editRole(roleId) {
+      const roleName = prompt("Entrez le nouveau nom du rôle:");
+      const roleDescription = prompt("Entrez la nouvelle description du rôle:");
+
+      if (roleName && roleDescription) {
+        fetch(`http://localhost:8081/api/roles/${roleId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name: roleName, description: roleDescription })
+        })
+                .then(response => {
+                  if (!response.ok) {
+                    throw new Error('Erreur dans la modification du rôle');
+                  }
+                  fetchRoles();
+                })
+                .catch(error => {
+                  console.error('Erreur:', error);
+                });
+      }
+    }
+
+    // Appeler la fonction pour récupérer les rôles quand la page est chargée
+    window.onload = fetchRoles;
+  </script>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <a href="roleList.html">Gestion Des Roles</a>
+  <a href="employeesList.html">Gestion des Employés</a>
+  <a href="departmentsList.html">Gestion des Départements</a>
+  <a href="documentList.html">Gestion des documents</a>
+  <a href="leaveList.html">Gestion des congés</a>
+</div>
+
+<div class="container mt-5">
+  <h1 class="mb-4">Gestion des Rôles</h1>
+
+  <!-- Formulaire pour ajouter un rôle -->
+  <h2>Ajouter un rôle</h2>
+  <div class="form-group">
+    <input type="text" id="roleName" class="form-control" placeholder="Nom du rôle" required>
+    <input type="text" id="roleDescription" class="form-control mt-2" placeholder="Description du rôle" required>
+    <button class="btn btn-primary mt-2" onclick="addRole()">Ajouter</button>
+  </div>
+
+  <table class="table table-striped mt-4">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nom</th>
+      <th>Description</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody id="rolesTableBody">
+    <!-- Les données seront insérées ici par JavaScript -->
+    </tbody>
+  </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
