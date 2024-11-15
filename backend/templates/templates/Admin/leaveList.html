@@ -35,13 +35,33 @@
     }
   </style>
   <script>
-    // Fonction pour obtenir les demandes de congé depuis l'API
+    // Initialisation de la page et des liens du profil utilisateur
+    function loadUserProfile() {
+      const userId = localStorage.getItem('userId');
+      if (userId) {
+        setNavbarLinks(userId);
+      } else {
+        console.error('User ID not found. Please log in again.');
+      }
+    }
+
+    // Mise à jour des liens de la barre de navigation
+    function setNavbarLinks(userId) {
+      document.getElementById('roles-link').href = `roleList.html?userId=${userId}`;
+      document.getElementById('employees-link').href = `employeesList.html?userId=${userId}`;
+      document.getElementById('departments-link').href = `departmentsList.html?userId=${userId}`;
+      document.getElementById('documents-link').href = `documentList.html?userId=${userId}`;
+      document.getElementById('leaves-link').href = `leaveList.html?userId=${userId}`;
+      document.getElementById('profile-link').href = `ProfilAdmin.html?userId=${userId}`;
+    }
+
+    // Récupérer et afficher les demandes de congé
     function fetchLeaveRequests() {
       fetch('http://localhost:8081/api/leave-requests')
               .then(response => response.json())
               .then(data => {
                 const tableBody = document.getElementById('adminLeaveRequests');
-                tableBody.innerHTML = '';
+                tableBody.innerHTML = ''; // Efface les anciennes données
                 data.forEach(request => {
                   const row = document.createElement('tr');
                   row.innerHTML = `
@@ -56,47 +76,52 @@
                   tableBody.appendChild(row);
                 });
               })
-              .catch(error => console.error('Erreur:', error));
+              .catch(error => console.error('Erreur lors de la récupération des demandes de congé:', error));
     }
 
-    // Fonction pour accepter une demande de congé
+    // Accepter une demande de congé
     function acceptLeave(id) {
       fetch(`http://localhost:8081/api/leave-requests/${id}/accept`, { method: 'POST' })
               .then(response => {
                 if (response.ok) {
                   alert('Demande acceptée.');
-                  fetchLeaveRequests(); // Mise à jour de la liste
+                  fetchLeaveRequests(); // Met à jour la liste
                 }
               })
-              .catch(error => console.error('Erreur:', error));
+              .catch(error => console.error('Erreur lors de l\'acceptation de la demande:', error));
     }
 
-    // Fonction pour rejeter une demande de congé
+    // Rejeter une demande de congé
     function rejectLeave(id) {
       fetch(`http://localhost:8081/api/leave-requests/${id}/reject`, { method: 'POST' })
               .then(response => {
                 if (response.ok) {
                   alert('Demande rejetée.');
-                  fetchLeaveRequests(); // Mise à jour de la liste
+                  fetchLeaveRequests(); // Met à jour la liste
                 }
               })
-              .catch(error => console.error('Erreur:', error));
+              .catch(error => console.error('Erreur lors du rejet de la demande:', error));
     }
 
-    // Charger les demandes au démarrage de la page
-    window.onload = fetchLeaveRequests;
+    // Charger les informations et demandes de congé au chargement de la page
+    window.onload = function() {
+      loadUserProfile();
+      fetchLeaveRequests();
+    };
   </script>
 </head>
 <body>
-<!-- Navbar -->
+<!-- Barre de navigation -->
 <div class="navbar">
-  <a href="roleList.html">Gestion des Rôles</a>
-  <a href="employeesList.html">Gestion des Employés</a>
-  <a href="departmentsList.html">Gestion des Départements</a>
-  <a href="documentList.html">Gestion des Documents</a>
-  <a href="leaveList.html">Gestion des Congés</a>
+  <a href="#" id="roles-link">Gestion des Rôles</a>
+  <a href="#" id="employees-link">Gestion des Employés</a>
+  <a href="#" id="departments-link">Gestion des Départements</a>
+  <a href="#" id="documents-link">Gestion des Documents</a>
+  <a href="#" id="leaves-link">Gestion des Congés</a>
+  <a href="#" id="profile-link">Profil</a>
 </div>
 
+<!-- Contenu principal -->
 <div class="container mt-5">
   <h1>Gestion des Demandes de Congé</h1>
   <table class="table table-striped">
@@ -110,7 +135,7 @@
     </tr>
     </thead>
     <tbody id="adminLeaveRequests">
-    <!-- Les demandes de congé seront insérées ici par JavaScript -->
+    <!-- Les demandes de congé seront ajoutées ici par JavaScript -->
     </tbody>
   </table>
 </div>

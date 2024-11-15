@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Employés</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 30px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #343a40;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border: none;
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            border: none;
+        }
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-around;
+            background-color: royalblue;
+            padding: 15px 0;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        .navbar a:hover {
+            color: #3b5fc9;
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<div class="navbar">
+    <a href="#" id="roles-link">Gestion des Rôles</a>
+    <a href="#" id="employees-link">Gestion des Employés</a>
+    <a href="#" id="departments-link">Gestion des Départements</a>
+    <a href="#" id="documents-link">Gestion des Documents</a>
+    <a href="#" id="leaves-link">Gestion des Congés</a>
+    <a href="#" id="profile-link">Profil</a>
+</div>
+
+<div class="container">
+    <h1 class="mb-4">Gestion des Employés</h1>
+
+    <!-- Formulaire d'ajout/modification d'un employé -->
+    <h2>Ajouter un employé</h2>
+    <form id="employeeForm">
+        <div class="form-group">
+            <label for="firstName">Prénom</label>
+            <input type="text" class="form-control" id="firstName" required>
+        </div>
+        <div class="form-group">
+            <label for="lastName">Nom</label>
+            <input type="text" class="form-control" id="lastName" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <input type="password" class="form-control" id="password" required>
+        </div>
+        <div class="form-group">
+            <label for="phoneNumber">Numéro de téléphone</label>
+            <input type="text" class="form-control" id="phoneNumber">
+        </div>
+        <div class="form-group">
+            <label for="hireDate">Date d'embauche</label>
+            <input type="date" class="form-control" id="hireDate" required>
+        </div>
+        <div class="form-group">
+            <label for="salary">Salaire</label>
+            <input type="number" class="form-control" id="salary" step="0.01" required>
+        </div>
+        <div class="form-group">
+            <label for="department">Département</label>
+            <select class="form-control" id="department" required>
+                <!-- Options de département ajoutées dynamiquement -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="role">Rôle</label>
+            <select class="form-control" id="role" required>
+                <!-- Options de rôle ajoutées dynamiquement -->
+            </select>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="addEmployee()">Ajouter</button>
+    </form>
+
+    <!-- Liste des employés -->
+    <h2 class="mt-5">Liste des Employés</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Prénom</th>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Téléphone</th>
+            <th>Date d'embauche</th>
+            <th>Salaire</th>
+            <th>Département</th>
+            <th>Rôle</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="employeesTableBody">
+        <!-- Employés ajoutés dynamiquement -->
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    // Function to get the user ID from the URL or local storage
+    function getUserId() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('userId') || localStorage.getItem('userId');
+    }
+
+    // Update the profile link dynamically with the user ID
+    function updateNavbar() {
+        const userId = getUserId();
+        if (userId) {
+            const profileLink = document.getElementById('profile-link');
+            profileLink.href = `ProfilAdmin.html?userId=${userId}`;
+        }
+    }
+
+    // Set the links in the navbar dynamically based on the user ID
+    function setNavbarLinks(userId) {
+        if (userId) {
+            document.getElementById('roles-link').href = `roleList.html?userId=${userId}`;
+            document.getElementById('employees-link').href = `employeesList.html?userId=${userId}`;
+            document.getElementById('departments-link').href = `departmentsList.html?userId=${userId}`;
+            document.getElementById('documents-link').href = `documentList.html?userId=${userId}`;
+            document.getElementById('leaves-link').href = `leaveList.html?userId=${userId}`;
+            document.getElementById('profile-link').href = `ProfilAdmin.html?userId=${userId}`;
+        }
+    }
+
+    // Charger la liste des départements et rôles
+    function loadDepartmentsAndRoles() {
+        axios.get('http://localhost:8081/api/departments').then(response => {
+            const departmentSelect = document.getElementById('department');
+            response.data.forEach(department => {
+                const option = document.createElement('option');
+                option.value = department.id;
+                option.textContent = department.name;
+                departmentSelect.appendChild(option);
+            });
+        });
+
+        axios.get('http://localhost:8081/api/roles').then(response => {
+            const roleSelect = document.getElementById('role');
+            response.data.forEach(role => {
+                const option = document.createElement('option');
+                option.value = role.id;
+                option.textContent = role.name;
+                roleSelect.appendChild(option);
+            });
+        });
+    }
+
+    // Charger la liste des employés
+    function loadEmployees() {
+        axios.get('http://localhost:8081/api/employees').then(response => {
+            const tableBody = document.getElementById('employeesTableBody');
+            tableBody.innerHTML = '';
+            response.data.forEach(employee => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+          <td>${employee.id}</td>
+          <td>${employee.firstName}</td>
+          <td>${employee.lastName}</td>
+          <td>${employee.email}</td>
+          <td>${employee.phoneNumber}</td>
+          <td>${employee.hireDate}</td>
+          <td>${employee.salary}</td>
+          <td>${employee.department ? employee.department.name : ''}</td>
+          <td>${employee.role ? employee.role.name : ''}</td>
+          <td>
+            <button class="btn btn-warning btn-sm" onclick="editEmployee(${employee.id})"><i class="fas fa-edit"></i> Modifier</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteEmployee(${employee.id})"><i class="fas fa-trash"></i> Supprimer</button>
+          </td>`;
+                tableBody.appendChild(row);
+            });
+        });
+    }
+
+    // Ajouter un employé
+    function addEmployee() {
+        const employee = {
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value,
+            phoneNumber: document.getElementById('phoneNumber').value,
+            hireDate: document.getElementById('hireDate').value,
+            salary: document.getElementById('salary').value,
+            department: { id: document.getElementById('department').value },
+            role: { id: document.getElementById('role').value }
+        };
+
+        axios.post('http://localhost:8081/api/employees', employee).then(() => {
+            document.getElementById('employeeForm').reset();
+            loadEmployees();
+        });
+    }
+
+    // Supprimer un employé
+    function deleteEmployee(employeeId) {
+        axios.delete(`http://localhost:8081/api/employees/${employeeId}`).then(() => loadEmployees());
+    }
+
+    window.onload = () => {
+        loadDepartmentsAndRoles();
+        loadEmployees();
+    };
+</script>
+
+</body>
+</html>

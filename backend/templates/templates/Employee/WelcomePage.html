@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Accueil Employé</title>
+  <title>Tableau de Bord Administrateur</title>
   <style>
     /* Style global */
     * {
@@ -51,9 +51,9 @@
       padding: 20px;
     }
 
-    /* Boîte de contenu */
-    .box {
-      max-width: 800px;
+    /* Tableau de bord */
+    .dashboard {
+      max-width: 1000px;
       width: 100%;
       background-color: white;
       padding: 40px;
@@ -62,36 +62,38 @@
       text-align: center;
     }
 
-    .box h1 {
+    .dashboard h1 {
       color: royalblue;
       margin-bottom: 20px;
     }
 
-    .box p {
-      color: #333;
-      font-size: 18px;
-      margin-bottom: 20px;
-    }
-
-    /* Boutons d'action */
-    .action-buttons {
+    .dashboard-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
       margin-top: 20px;
     }
 
-    .action-buttons a {
-      display: inline-block;
-      padding: 10px 20px;
-      margin: 10px;
-      color: white;
-      background-color: royalblue;
-      border-radius: 5px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: background-color 0.3s ease;
+    .dashboard-card {
+      flex: 1;
+      min-width: 220px;
+      background-color: #eaf3ff;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
-    .action-buttons a:hover {
-      background-color: #3b5fc9;
+    .dashboard-card h2 {
+      font-size: 24px;
+      color: royalblue;
+      margin-bottom: 10px;
+    }
+
+    .dashboard-card p {
+      font-size: 18px;
+      color: #333;
     }
 
     /* Media Queries pour mobile */
@@ -104,12 +106,6 @@
         padding: 10px 0;
         text-align: center;
       }
-
-      .action-buttons a {
-        display: block;
-        width: 100%;
-        margin: 10px 0;
-      }
     }
   </style>
 </head>
@@ -121,17 +117,43 @@
   <a href="leaveRequest.html">Demande de Congés</a>
   <a href="documentRequest.html">Demande de Document</a>
 </div>
+
 <!-- Contenu principal centré -->
 <div class="content">
-  <div class="box">
-    <h1>Bienvenue sur l'Accueil Employé</h1>
-    <p>Vous pouvez utiliser les options ci-dessus pour soumettre une demande de congé, demander des documents ou consulter les opportunités de carrière.</p>
+  <div class="dashboard">
+    <h1>Tableau de Bord Administrateur</h1>
 
-    <!-- Boutons d'action vers les différentes sections -->
-    <div class="action-buttons">
-      <a href="leaveRequest.html">Demander un Congé</a>
-      <a href="documentRequest.html">Demander un Document</a>
-      <a href="career.html">Voir les Opportunités de Carrière</a>
+    <!-- Sections de statistiques -->
+    <div class="dashboard-section">
+      <!-- Carte : Nombre total d'employés -->
+      <div class="dashboard-card">
+        <h2>Total Employés</h2>
+        <p>120</p>
+      </div>
+
+      <!-- Carte : Nombre de demandes de congé en attente -->
+      <div class="dashboard-card">
+        <h2>Demandes de Congés</h2>
+        <p>15 en attente</p>
+      </div>
+
+      <!-- Carte : Nombre de demandes de documents en attente -->
+      <div class="dashboard-card">
+        <h2>Demandes de Documents</h2>
+        <p>10 en attente</p>
+      </div>
+
+      <!-- Carte : Nombre de recrutements en cours -->
+      <div class="dashboard-card">
+        <h2>Recrutements</h2>
+        <p>3 postes ouverts</p>
+      </div>
+
+      <!-- Carte : Alertes de discipline -->
+      <div class="dashboard-card">
+        <h2>Actions Disciplinaires</h2>
+        <p>2 cas en cours</p>
+      </div>
     </div>
   </div>
 </div>

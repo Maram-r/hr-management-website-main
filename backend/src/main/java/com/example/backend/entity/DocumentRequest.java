@@ -22,7 +22,7 @@ public class DocumentRequest {
     private Employee employee;
 
     private String documentType;
-    private LocalDate requestDate;
+    private String requestDate;
     private String status; // Statut de la demande: "accepted" ou "rejected"
 
 
@@ -43,17 +43,11 @@ public class DocumentRequest {
         return employee;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
+    public void setEmployee(Object employee) {
+        this.employee = (Employee) employee;
     }
 
-    public LocalDate getRequestDate() {
-        return requestDate;
-    }
 
-    public void setRequestDate(LocalDate requestDate) {
-        this.requestDate = requestDate;
-    }
 
     public Long getId() {
         return id;

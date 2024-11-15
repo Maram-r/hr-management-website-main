@@ -40,25 +40,28 @@ public class DocumentRequestService {
 
         // Met à jour les champs nécessaires
         documentRequest.setDocumentType(updatedRequest.getDocumentType());
-        documentRequest.setRequestDate(updatedRequest.getRequestDate());
-        documentRequest.setEmployee(updatedRequest.getEmployee()); // S'assurer que l'employé existe
+
+        documentRequest.setEmployee(updatedRequest.getEmployee()); // Assurez-vous que l'employé existe
         return documentRequestRepository.save(documentRequest);
     }
 
     public void deleteDocumentRequest(Long id) {
         documentRequestRepository.deleteById(id);
     }
+
     public void updateRequestStatus(Long id, String status) throws Exception {
         Optional<DocumentRequest> optionalRequest = documentRequestRepository.findById(id);
         if (optionalRequest.isPresent()) {
             DocumentRequest request = optionalRequest.get();
+            if (status == null || (!status.equals("accepted") && !status.equals("rejected"))) {
+                throw new Exception("Statut invalide.");
+            }
             request.setStatus(status);  // Mettez à jour le statut
             documentRequestRepository.save(request);  // Enregistrez la demande mise à jour
         } else {
             throw new Exception("Demande introuvable.");
         }
     }
-
 
     public void acceptRequest(Long id) throws Exception {
         // Logique pour traiter l'acceptation d'une demande de document
@@ -68,5 +71,9 @@ public class DocumentRequestService {
         request.setStatus("Accepted");
         documentRequestRepository.save(request);
         // Vous pouvez aussi ajouter une redirection ou une notification ici si nécessaire
+    }
+
+    public Optional<DocumentRequest> findById(Long id) {
+        return documentRequestRepository.findById(id);
     }
 }

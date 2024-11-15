@@ -40,7 +40,6 @@
       padding: 15px 0;
       box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
     }
-
     .navbar a {
       color: white;
       text-decoration: none;
@@ -48,13 +47,39 @@
       font-weight: bold;
       transition: color 0.3s ease;
     }
-
     .navbar a:hover {
       color: #3b5fc9;
     }
   </style>
   <script>
-    // Fonction pour récupérer et afficher les rôles
+    function updateNavbar() {
+      const userId = getUserId();
+      if (userId) {
+        const profileLink = document.getElementById('profile-link');
+        profileLink.href = `ProfilAdmin.html?userId=${userId}`;
+      }
+    }
+    // Function to get the user ID from the URL or local storage
+    function getUserId() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('userId') || localStorage.getItem('userId');
+    }
+
+
+
+    // Set the links in the navbar dynamically based on the user ID
+    function setNavbarLinks(userId) {
+      if (userId) {
+        document.getElementById('roles-link').href = `roleList.html?userId=${userId}`;
+        document.getElementById('employees-link').href = `employeesList.html?userId=${userId}`;
+        document.getElementById('departments-link').href = `departmentsList.html?userId=${userId}`;
+        document.getElementById('documents-link').href = `documentList.html?userId=${userId}`;
+        document.getElementById('leaves-link').href = `leaveList.html?userId=${userId}`;
+        document.getElementById('profile-link').href = `ProfilAdmin.html?userId=${userId}`;
+      }
+    }
+
+    // Fetch roles from the API
     function fetchRoles() {
       fetch('http://localhost:8081/api/roles')
               .then(response => {
@@ -76,8 +101,7 @@
               <td>
                 <button class="btn btn-warning btn-sm" onclick="editRole(${role.id})"><i class="fas fa-edit"></i> Modifier</button>
                 <button class="btn btn-danger btn-sm" onclick="deleteRole(${role.id})"><i class="fas fa-trash"></i> Supprimer</button>
-              </td>
-            `;
+              </td>`;
                   tableBody.appendChild(row);
                 });
               })
@@ -86,7 +110,7 @@
               });
     }
 
-    // Fonction pour ajouter un rôle
+    // Add a new role
     function addRole() {
       const roleName = document.getElementById('roleName').value;
       const roleDescription = document.getElementById('roleDescription').value;
@@ -114,7 +138,7 @@
               });
     }
 
-    // Fonction pour supprimer un rôle
+    // Delete a role
     function deleteRole(roleId) {
       fetch(`http://localhost:8081/api/roles/${roleId}`, {
         method: 'DELETE'
@@ -130,7 +154,7 @@
               });
     }
 
-    // Fonction pour éditer un rôle
+    // Edit a role
     function editRole(roleId) {
       const roleName = prompt("Entrez le nouveau nom du rôle:");
       const roleDescription = prompt("Entrez la nouvelle description du rôle:");
@@ -155,25 +179,30 @@
       }
     }
 
-    // Appeler la fonction pour récupérer les rôles quand la page est chargée
-    window.onload = fetchRoles;
+    // Call this function when the page loads
+    window.onload = function() {
+      const userId = getUserId();
+      setNavbarLinks(userId);
+      fetchRoles();
+    };
   </script>
 </head>
 <body>
 
 <!-- Navbar -->
 <div class="navbar">
-  <a href="roleList.html">Gestion Des Roles</a>
-  <a href="employeesList.html">Gestion des Employés</a>
-  <a href="departmentsList.html">Gestion des Départements</a>
-  <a href="documentList.html">Gestion des documents</a>
-  <a href="leaveList.html">Gestion des congés</a>
+  <a href="#" id="roles-link">Gestion des Rôles</a>
+  <a href="#" id="employees-link">Gestion des Employés</a>
+  <a href="#" id="departments-link">Gestion des Départements</a>
+  <a href="#" id="documents-link">Gestion des Documents</a>
+  <a href="#" id="leaves-link">Gestion des Congés</a>
+  <a href="#" id="profile-link">Profil</a>
 </div>
 
 <div class="container mt-5">
   <h1 class="mb-4">Gestion des Rôles</h1>
 
-  <!-- Formulaire pour ajouter un rôle -->
+  <!-- Form for adding a role -->
   <h2>Ajouter un rôle</h2>
   <div class="form-group">
     <input type="text" id="roleName" class="form-control" placeholder="Nom du rôle" required>
@@ -191,7 +220,7 @@
     </tr>
     </thead>
     <tbody id="rolesTableBody">
-    <!-- Les données seront insérées ici par JavaScript -->
+    <!-- Role data will be dynamically added here by JavaScript -->
     </tbody>
   </table>
 </div>

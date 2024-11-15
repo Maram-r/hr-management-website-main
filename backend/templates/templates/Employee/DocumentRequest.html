@@ -16,7 +16,6 @@
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
-        /* Navbar */
         .navbar {
             display: flex;
             justify-content: space-around;
@@ -24,7 +23,6 @@
             padding: 15px 0;
             box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
         }
-
         .navbar a {
             color: white;
             text-decoration: none;
@@ -32,22 +30,36 @@
             font-weight: bold;
             transition: color 0.3s ease;
         }
-
         .navbar a:hover {
             color: #3b5fc9;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
         }
     </style>
     <script>
         function submitRequest() {
             const documentType = document.getElementById('documentType').value;
-            const employeeId = document.getElementById('employeeId').value; // Assurez-vous que l'ID de l'employé est géré correctement
+            const employeeId = document.getElementById('employeeId').value;
+
+            // Créez l'objet avec les informations supplémentaires nécessaires
+            const requestPayload = {
+                documentType: documentType,
+                employee: { id: employeeId },
+                status: "en attente"
+            };
+
+            // Vérification des valeurs avant envoi
+            console.log('Données envoyées:', requestPayload);
 
             fetch('http://localhost:8081/api/document-requests', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ documentType, employee: { id: employeeId } })
+                body: JSON.stringify(requestPayload)
             })
                 .then(response => {
                     if (!response.ok) {
@@ -55,22 +67,29 @@
                     }
                     alert('Demande de document soumise avec succès');
                     document.getElementById('documentType').value = '';
+                    document.getElementById('employeeId').value = '';
+                    // Masquer le message d'erreur, s'il y en a
+                    document.getElementById('error-message').style.display = 'none';
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
+                    // Afficher un message d'erreur dans l'interface utilisateur
+                    document.getElementById('error-message').innerText = 'Erreur : ' + error.message;
+                    document.getElementById('error-message').style.display = 'block';
                 });
         }
     </script>
 </head>
 <body>
-<!-- Navbar -->
 <div class="navbar">
-    <a href="leaveRequest.html">Demande de Congés</a>
-    <a href="documentRequest.html">Demande de Document</a>
-    <a href="career.html">Carrière</a>
+    <a href="Profile.html" id="profile">Carrière</a>
+    <a href="leaveRequest.html" id="leave-request">Demande de Congés</a>
+    <a href="documentRequest.html" id="document-request">Demande de Document</a>
 </div>
 <div class="container">
     <h1>Demande de Document</h1>
+    <!-- Zone d'affichage des erreurs -->
+    <div id="error-message" class="error-message" style="display:none;"></div>
     <div class="form-group">
         <label for="employeeId">ID de l'Employé</label>
         <input type="number" id="employeeId" class="form-control" placeholder="Entrez l'ID de l'employé" required>

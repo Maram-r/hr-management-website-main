@@ -34,21 +34,14 @@ public class LeaveRequestController {
         }
     }
 
-    // Mettre à jour le statut d'une demande de congé (approuver ou rejeter)
-    @PutMapping("/{id}/status")
-    public ResponseEntity<?> updateLeaveRequestStatus(@PathVariable Long id, @RequestParam String status) {
-        try {
-            LeaveRequest updatedRequest = service.updateLeaveRequestStatus(id, status);
-            if (status.equalsIgnoreCase("Approved")) {
-                // Logique pour envoyer une notification à l'employé
-                // Par exemple : envoyerNotification(updatedRequest.getEmployee(), "Votre demande de congé a été approuvée.");
-            } else if (status.equalsIgnoreCase("Rejected")) {
-                // Logique pour envoyer une notification à l'employé
-                // Par exemple : envoyerNotification(updatedRequest.getEmployee(), "Votre demande de congé a été rejetée.");
-            }
-            return ResponseEntity.ok(updatedRequest);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erreur lors de la mise à jour du statut : " + e.getMessage());
-        }
+    @PostMapping("/{id}/accept")
+    public ResponseEntity<Void> acceptLeaveRequest(@PathVariable Long id) {service.updateLeaveRequestStatus(id, "Accepted");
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/reject")
+    public ResponseEntity<Void> rejectLeaveRequest(@PathVariable Long id) {
+        service.updateLeaveRequestStatus(id, "Rejected");
+        return ResponseEntity.ok().build();
     }
 }

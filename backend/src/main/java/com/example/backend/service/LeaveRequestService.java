@@ -35,20 +35,10 @@ public class LeaveRequestService {
         }
     }
 
-    // Mettre à jour le statut d'une demande de congé
-    public LeaveRequest updateLeaveRequestStatus(Long id, String status) {
-        LeaveRequest leaveRequest = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Leave Request not found"));
-
-        if (!status.equalsIgnoreCase("Approved") && !status.equalsIgnoreCase("Rejected")) {
-            throw new IllegalArgumentException("Status must be either 'Approved' or 'Rejected'");
-        }
-
+    public void updateLeaveRequestStatus(Long id, String status) {
+        LeaveRequest leaveRequest = repository.findById(id).orElseThrow();
         leaveRequest.setStatus(status);
-        // Ici, vous pouvez appeler une méthode pour notifier l'employé
-        notifyEmployee(leaveRequest.getEmployee(), status);
-
-        return repository.save(leaveRequest);
+        repository.save(leaveRequest);
     }
 
     // Méthode pour notifier l'employé (à implémenter selon vos besoins)

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 500px;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 20px;
+      margin: 80px auto;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease;
+    }
+
+    .title {
+      font-size: 28px;
+      color: royalblue;
+      font-weight: bold;
+      text-transform: uppercase;
+      padding-left: 30px;
+      position: relative;
+    }
+
+    .title::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background-color: royalblue;
+    }
+
+    .input {
+      width: 89%;
+      padding: 12px;
+      border: 1px solid #d1d1d1;
+      border-radius: 10px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      font-size: 16px;
+    }
+
+    .input:focus {
+      border-color: royalblue;
+      box-shadow: 0 0 8px rgba(65, 105, 225, 0.3);
+    }
+
+    .submit {
+      background-color: royalblue;
+      padding: 12px;
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .submit:hover {
+      background-color: #3b5fc9;
+    }
+
+    .signup {
+      text-align: center;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .signup a {
+      color: royalblue;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .signup a:hover {
+      color: #3b5fc9;
+    }
+
+    .error-message {
+      color: red;
+      text-align: center;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<form class="form" id="loginForm">
+  <p class="title">Login</p>
+  <p class="message">Enter your credentials to access your profile.</p>
+  <label>
+    <input required placeholder="Email" type="email" id="email" class="input">
+  </label>
+  <label>
+    <input required placeholder="Password" type="password" id="password" class="input">
+  </label>
+  <button type="button" class="submit" onclick="login()">Login</button>
+  <p class="signup">Don't have an account? Ask your manager to create one for you<a href="./Admin/WelcomePage">Signup</a></p>
+  <div class="error-message" id="error-message"></div>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  // Fonction de connexion
+  function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    // Clear previous error message
+    document.getElementById('error-message').textContent = "";
+
+    axios.post('http://localhost:8081/api/users/findByEmailAndPassword', { email, password })
+            .then(response => {
+              if (response.data) {
+                const userId = response.data;
+                alert('Login successful!');
+                // Redirect to the user's profile page with the userId
+                window.location.href = `Profile.html?userId=${userId}`;
+
+              } else {
+                // If the response is empty or no userId is returned
+                document.getElementById('error-message').textContent = "Invalid credentials. Please try again.";
+              }
+            })
+            .catch(error => {
+              console.error('Login failed:', error);
+              document.getElementById('error-message').textContent = "An error occurred. Please try again later.";
+            });
+  }
+</script>
+
+</body>
+</html>
+

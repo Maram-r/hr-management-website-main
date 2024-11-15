@@ -42,6 +42,30 @@
     }
   </style>
   <script>
+    function setProfileLink(userId) {
+      const profileLink = document.getElementById('profile-link');
+      profileLink.href = `ProfilAdmin.html?userId=${userId}`;
+    }
+
+    function getUserId() {
+      const urlParams = new URLSearchParams(window.location.search);
+      let userId = urlParams.get('userId');
+      if (!userId) {
+        userId = localStorage.getItem('userId');
+      }
+      return userId || null;
+    }
+
+    function loadUserProfile() {
+      const userId = getUserId();
+      if (userId) {
+        setProfileLink(userId);
+        setNavbarLinks(userId);
+      } else {
+        console.error('User ID not found. Please login again.');
+      }
+    }
+
     function fetchDocumentRequests() {
       fetch('http://localhost:8081/api/document-requests')
               .then(response => response.json())
@@ -52,15 +76,15 @@
                   const row = document.createElement('tr');
                   row.id = `request-${request.id}`;
                   row.innerHTML = `
-              <td>${request.id}</td>
-              <td>${request.employee.id}</td>
-              <td>${request.documentType}</td>
-              <td>${new Date(request.requestDate).toLocaleDateString()}</td>
-              <td>
-                <button class="btn btn-success" onclick="acceptRequest(${request.id})">Accepter</button>
-                <button class="btn btn-danger" onclick="rejectRequest(${request.id})">Rejeter</button>
-              </td>
-            `;
+                    <td>${request.id}</td>
+                    <td>${request.employee.id}</td>
+                    <td>${request.documentType}</td>
+                    <td>${new Date(request.requestDate).toLocaleDateString()}</td>
+                    <td>
+                      <button class="btn btn-success" onclick="acceptRequest(${request.id})">Accepter</button>
+                      <button class="btn btn-danger" onclick="rejectRequest(${request.id})">Rejeter</button>
+                    </td>
+                  `;
                   tableBody.appendChild(row);
                 });
               })
@@ -77,7 +101,6 @@
                 if (!response.ok) {
                   return response.text().then(errMsg => { throw new Error(errMsg || 'Erreur lors de l’acceptation de la demande'); });
                 }
-                // Supprimer l'élément de la liste des demandes après acceptation
                 document.getElementById(`request-${requestId}`).remove();
                 alert('Demande acceptée.');
               })
@@ -86,14 +109,22 @@
                 alert(`Erreur : ${error.message}`);
               });
     }
-
+    function setNavbarLinks(userId) {
+      if (userId) {
+        document.getElementById('roles-link').href = `roleList.html?userId=${userId}`;
+        document.getElementById('employees-link').href = `employeesList.html?userId=${userId}`;
+        document.getElementById('departments-link').href = `departmentsList.html?userId=${userId}`;
+        document.getElementById('documents-link').href = `documentList.html?userId=${userId}`;
+        document.getElementById('leaves-link').href = `leaveList.html?userId=${userId}`;
+        document.getElementById('profile-link').href = `ProfilAdmin.html?userId=${userId}`;
+      }
+    }
     function rejectRequest(requestId) {
       fetch(`http://localhost:8081/api/document-requests/${requestId}`, {
         method: 'DELETE'
       })
               .then(response => {
                 if (response.ok) {
-                  // Supprimer l'élément de la liste des demandes après rejet
                   document.getElementById(`request-${requestId}`).remove();
                   alert('Demande rejetée et supprimée');
                 } else {
@@ -105,16 +136,20 @@
               });
     }
 
-    window.onload = fetchDocumentRequests;
+    window.onload = function() {
+      loadUserProfile();
+      fetchDocumentRequests();
+    };
   </script>
 </head>
 <body>
 <div class="navbar">
-  <a href="roleList.html">Gestion Des Roles</a>
-  <a href="employeesList.html">Gestion des Employés</a>
-  <a href="departmentsList.html">Gestion des Départements</a>
-  <a href="documentList.html">Gestion des documents</a>
-  <a href="leaveList.html">Gestion des congés</a>
+  <a href="#" id="roles-link">Gestion Des Rôles</a>
+  <a href="#" id="employees-link">Gestion des Employés</a>
+  <a href="#" id="departments-link">Gestion des Départements</a>
+  <a href="#" id="documents-link">Gestion des documents</a>
+  <a href="#" id="leaves-link">Gestion des congés</a>
+  <a href="#" id="profile-link">Profil</a>
 </div>
 <div class="container mt-5">
   <h1>Demandes de Documents</h1>

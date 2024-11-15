@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .profile-container {
+      max-width: 800px;
+      margin: 50px auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .title {
+      font-size: 32px;
+      color: royalblue;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .info {
+      font-size: 18px;
+      color: #333;
+      margin: 15px 0;
+    }
+
+    .info label {
+      font-weight: bold;
+    }
+
+    .error-message {
+      color: red;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    /* Responsive design for small screens */
+    @media (max-width: 600px) {
+      .profile-container {
+        padding: 20px;
+      }
+
+      .title {
+        font-size: 24px;
+      }
+
+      .info {
+        font-size: 16px;
+      }
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-around;
+      background-color: royalblue;
+      padding: 15px 0;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    .navbar a:hover {
+      color: #3b5fc9;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <a href="#" id="profile">Profile</a>
+  <a href="leaveRequest.html" id="leave-request">Demande de Congés</a>
+  <a href="documentRequest.html" id="document-request">Demande de Document</a>
+
+</div>
+
+<!-- Profile content -->
+<div class="profile-container" id="profile-container">
+  <p class="title">Profile</p>
+  <div id="profile-info">
+    <!-- User info will be displayed here -->
+  </div>
+  <div class="error-message" id="error-message"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  function getUserId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    let userId = urlParams.get('userId'); // Get userId from URL parameters
+
+    // If userId is not found in URL, try to get it from localStorage
+    if (!userId) {
+      userId = localStorage.getItem('userId');
+    }
+
+    // Return the userId or null if not found
+    return userId || null;
+  }
+
+  // Set the profile link and navbar links with the userId
+  function setNavbarLinks(userId) {
+    const profileLink = document.getElementById('profile-link');
+    profileLink.href = `ProfilAdmin.html?userId=${userId}`;
+
+    // Modify other navbar links to include userId
+    const navbarLinks = document.querySelectorAll('.navbar a');
+    navbarLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && !href.includes('?userId=')) {
+        link.href = `${href}?userId=${userId}`;
+      }
+    });
+  }
+  // Function to get the user ID from the URL or local storage
+  function getUserId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('userId') || localStorage.getItem('userId');
+  }
+
+
+
+  // Set the links in the navbar dynamically based on the user ID
+  function setNavbarLinks(userId) {
+    if (userId) {
+      document.getElementById('profile').href = `Profile.html?userId=${userId}`;
+      document.getElementById('leave-request').href = `LeaveRequest.html?userId=${userId}`;
+      document.getElementById('document-request').href = `DocumentRequest.html?userId=${userId}`;
+    }
+  }
+  // Function to load and display the user profile
+  function loadUserProfile() {
+    const userId = getUserId();
+
+    if (!userId) {
+      document.getElementById('error-message').textContent = 'User ID not found. Please login again.';
+      return;
+    }
+
+    // Set the navbar links with the userId
+    setNavbarLinks(userId);
+
+    // Make an API request to fetch user data
+    axios.get(`http://localhost:8081/api/users/${userId}`)
+            .then(response => {
+              if (response.data) {
+                const user = response.data;
+                const profileInfo = `
+            <div class="info">
+              <label>Name:</label> ${user.username}
+            </div>
+            <div class="info">
+              <label>Email:</label> ${user.email}
+            </div>
+            <div class="info">
+              <label>Role:</label> ${user.role.name}
+            </div>
+          `;
+
+                document.getElementById('profile-info').innerHTML = profileInfo;
+              } else {
+                document.getElementById('error-message').textContent = 'Unable to retrieve user data.';
+              }
+            })
+            .catch(error => {
+              console.error('Error fetching user data:', error);
+              document.getElementById('error-message').textContent = 'An error occurred while fetching your data. Please try again later.';
+            });
+  }
+
+  // Load user profile when the page is ready
+  window.onload = loadUserProfile;
+</script>
+
+</body>
+</html>
